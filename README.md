@@ -9,7 +9,7 @@ Install MySQL
 ```
 ### Running the Web application
 
-To install application
+To install node packages for application
 ```
 npm install 
 ```
