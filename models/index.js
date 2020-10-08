@@ -24,5 +24,31 @@ seqUpdateNotFields(sequelize);
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 db.user = require("./user.js")(sequelize, Sequelize);
+db.question = require("./question.js")(sequelize, Sequelize);
+db.answer = require("./answer.js")(sequelize, Sequelize);
+db.category = require("./category.js")(sequelize, Sequelize);
+
+
+db.user.hasMany(db.question, { as: "Questions" });
+db.question.hasMany(db.answer,{onDelete: "cascade"});
+
+db.question.belongsTo(db.user, {
+  foreignKey: "userId",
+  as: "user",
+});
+
+db.question.belongsToMany(db.category, {through: 'CategoryQuestion',foreignKey: "questionId",onDelete: "cascade", onUpdate: "cascade"});
+db.category.belongsToMany(db.question, {through: 'CategoryQuestion',foreignKey:"categoryId",onDelete: "cascade", onUpdate:"cascade"});
+
+
+db.answer.belongsTo(db.user, {
+  foreignKey: "userId",
+});
+
+
+db.answer.belongsTo(db.question, {
+  foreignKey: "questionId",
+});
+
 
 module.exports = db;
