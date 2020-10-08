@@ -55,10 +55,14 @@ exports.createQuestion = (req, res) => {
         }).then(data => {
             setTimeout(async function () {
                 res.status(201).send({
-                    data,
+                        "question_id": data.id,
+                        "created_timestamp": data.createdAt,
+                        "updated_timestamp": data.updatedAt,
+                        "user_id": data.userId,
+                        "question_text": data.question_text,
                     categories: categories_array
                 })
-            })
+            },100)
         })
     }).catch(err => {
         err
@@ -79,7 +83,12 @@ exports.createAnswer = (req, res,) => {
         userId: req.user.id
     }).then((answer) => {
         return res.send({
-            answer: answer
+            "answer_id": answer.id,
+                "question_id": answer.questionId,
+                "created_timestamp": answer.createdAt,
+                "updated_timestamp": answer.updatedAt,
+                "user_id": answer.userId,
+                "answer_text": answer.answer_text
         })
     }).catch((err) => {
         err
@@ -131,10 +140,10 @@ exports.updateAnswer = (req, res,) => {
 exports.deleteQuestion = (req, res) => {
     Answer.findOne({
         where: {
-            id: req.params.qid
+            questionId: req.params.qid
         }
     }).then(answer => {
-        console.log("iamhere")
+        console.log(answer+"---------")
         if (!answer) {
             Question.destroy({
                 where: {
@@ -179,26 +188,49 @@ exports.updateQuestion = (req, res,) => {
     }, {
         where: { id: req.params.qid }
     }, {
-        include: [
-            {
-                model: Category,
-                required: false,
-                attributes: ["category", "id"],
-                through: { attributes: [] }
-            },
-            {
-                model: Answer,
-                attributes: ["answer_text"],
-            }
-        ]
+
     }).then(() => {
-        
-    
+        Question.findByPk(req.params.qid).then((question)=>{
+            for (let i = 0; i < req.body.categories.length; i++) {
+                Category.findOne({
+                    where: {
+                        category: req.body.categories[i].category.toLowerCase()
+                    }
+                }).then((cat) => {
+                    if (!cat) {
+                        Category.create({
+                            category: req.body.categories[i].category.toLowerCase()
+                        }).then(category => {
+                            question.addCategories(category)
+                        })
+                    } else {
+                        question.addCategories(cat)
+                    }
+                })
+            }
+        })
     })
         .then(data => {
-            res.status(201).send({
-                data
-            })
+                Question.findByPk(req.params.qid, {
+                    include: [
+                        {
+                            model: Category,
+                            required: false,
+                            attributes: ["category", "id"],
+                            through: { attributes: [] }
+                        },
+                        {
+                            model: Answer,
+                            attributes: ["answer_text","id", "createdAt","updatedAt"],
+                        }
+                    ]
+                }).then((question) => {
+                    return res.status(201).send(
+                        question
+                    )
+                }).catch(err => {
+                    err
+                })
         });
 };
 
@@ -243,14 +275,13 @@ exports.getAllQuestions = (req, res,) => {
             },
             {
                 model: Answer,
-                attributes: ["answer_text", "id"],
+                attributes: ["answer_text", "id", "createdAt", "updatedAt"],
             }
         ]
 
     }).then((question) => {
         return res.status(201).send(
-
-            question
+           question
         )
 
     }).catch(err => {
@@ -270,7 +301,7 @@ exports.getQuestion = (req, res,) => {
             },
             {
                 model: Answer,
-                attributes: ["answer_text"],
+                attributes: ["answer_text","id", "createdAt","updatedAt"],
             }
         ]
     }).then((question) => {
