@@ -1,8 +1,19 @@
 const db = require("../models");
 const User = db.user;
+const Question = db.question;
 var bcrypt = require("bcryptjs");
 
 exports.signup = (req, res) => {
+    if(!req.body.first_name){
+        return res.send(400).return({
+            "message":"First name cannot be Empty"
+        })
+    }
+    else if(!req.body.last_name){
+        return res.send(400).return({
+            "message":"last name cannot be Empty"
+        })
+    }
     // Save User to Database
     User.create({
         first_name: req.body.first_name,
@@ -11,6 +22,7 @@ exports.signup = (req, res) => {
         password: bcrypt.hashSync(req.body.password, 8)
     }).then((user) => {
         res.status(200).send({
+            id: user.id,
             first_name: user.first_name,
             last_name: user.last_name,
             email: user.email,
@@ -46,6 +58,17 @@ exports.signin = (req, res) => {
 };
 
 exports.update = (req, res) => {
+    if(!req.body.first_name){
+        return res.send(400).return({
+            "message":"First name cannot be Empty"
+        })
+    }
+
+    else if(!req.body.last_name){
+        return res.send(400).return({
+            "message":"last name cannot be Empty"
+        })
+    }
     // Save User to Database
     User.update({
         first_name: req.body.first_name,
@@ -68,8 +91,28 @@ exports.update = (req, res) => {
             });
         })
     })
-
         .catch(err => {
             res.status(500).send({ message: err.message });
         });
 };
+
+
+exports.getUserDetails=(req,res)=>{
+    User.findByPk(req.params.id)
+        .then(user => {
+            if (!user) {
+                return res.status(404).send({ message: "User Not found." });
+            }
+            res.status(200).send({
+                id: user.id,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                email: user.email,
+            });
+        })
+        .catch(err => {
+            res.status(500).send({ message: err.message });
+        });
+};
+
+
