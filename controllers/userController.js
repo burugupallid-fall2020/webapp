@@ -25,7 +25,7 @@ exports.signup = (req, res) => {
             id: user.id,
             first_name: user.first_name,
             last_name: user.last_name,
-            email: user.email,
+            username: user.email,
             account_created: user.createdAt,
             account_updated: user.updatedAt,
         });
@@ -49,7 +49,7 @@ exports.signin = (req, res) => {
                 id: user.id,
                 first_name: user.first_name,
                 last_name: user.last_name,
-                email: user.email,
+                username: user.email,
             });
         })
         .catch(err => {
