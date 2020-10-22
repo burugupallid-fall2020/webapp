@@ -1,5 +1,7 @@
 const controller = require("../controllers/userController");
 const questioncontroller = require("../controllers/questionController");
+const awscontroller = require("../controllers/awscontroller");
+let upload = require('../config/multer.configuration');
 const { verifySignUp, auth, verifyAnswerID, verifyDelete,verifyDeleteAnswer} = require("../middleware");
 const verifyUpdate = require("../middleware/verifyUpdate");
 const verifyQuestion = require("../middleware/verifyQuestionID");
@@ -35,4 +37,14 @@ module.exports = function(app) {
   app.get("/v1/question/:qid/answer/:aid", [verifyQuestion.checkValidQuestionID,verifyAnswerID.checkValidAnswerID],questioncontroller.getQuestionsAnswer)
   app.get("/v1/questions", questioncontroller.getAllQuestions)
   app.get("/v1/question/:qid", [verifyQuestion.checkValidQuestionID],questioncontroller.getQuestion)
+
+  // file upload routes
+  app.post("/v1/question/:qid/file", [auth.BasicAuth], upload.single("file"), awscontroller.attachFileWithQuestion);
+
+  app.post("/v1/question/:qid/answer/:aid/file",[auth.BasicAuth],upload.single("file"),awscontroller.attachFileWithAnswer);
+  
+  app.delete("/v1/question/:qid/file/:fid", [auth.BasicAuth,verifyQuestion.checkValidQuestionID,verifyDelete.checkDelete], awscontroller.deleteFileFromQuestion);
+  
+  app.delete("/v1/question/:qid/answer/:aid/file/:fid", [auth.BasicAuth,verifyQuestion.checkValidQuestionID,verifyDelete.checkDelete], awscontroller.deleteFileFromAnswer);
+  
 };

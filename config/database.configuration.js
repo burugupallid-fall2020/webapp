@@ -1,9 +1,10 @@
 module.exports = {
-    HOST: "localhost",
-    USER: "bdsaisantosh",
-    PASSWORD: "bdsaisantosh",
-    DB: "csye6225",
+    HOST: process.env.DBhost,
+    USER: process.env.DBusername,
+    PASSWORD: process.env.DBpassword,
+    DB:  process.env.DBname,
     dialect: "mysql",
+    ssl: "AWS RDS",
     pool: {
       max: 5,
       min: 0,
