@@ -39,12 +39,12 @@ module.exports = function(app) {
   app.get("/v1/question/:qid", [verifyQuestion.checkValidQuestionID],questioncontroller.getQuestion)
 
   // file upload routes
-  app.post("/v1/question/:qid/file", [auth.BasicAuth], upload.single("file"), awscontroller.attachFileWithQuestion);
+  app.post("/v1/question/:qid/file", [auth.BasicAuth,verifyQuestion.checkValidQuestionID], upload.single("file"), awscontroller.attachFileWithQuestion);
 
-  app.post("/v1/question/:qid/answer/:aid/file",[auth.BasicAuth],upload.single("file"),awscontroller.attachFileWithAnswer);
+  app.post("/v1/question/:qid/answer/:aid/file",[auth.BasicAuth,verifyQuestion.checkValidQuestionID,verifyAnswerID.checkValidAnswerID],upload.single("file"),awscontroller.attachFileWithAnswer);
   
   app.delete("/v1/question/:qid/file/:fid", [auth.BasicAuth,verifyQuestion.checkValidQuestionID,verifyDelete.checkDelete], awscontroller.deleteFileFromQuestion);
   
-  app.delete("/v1/question/:qid/answer/:aid/file/:fid", [auth.BasicAuth,verifyQuestion.checkValidQuestionID,verifyDelete.checkDelete], awscontroller.deleteFileFromAnswer);
-  
+  app.delete("/v1/question/:qid/answer/:aid/file/:fid", [auth.BasicAuth,verifyQuestion.checkValidQuestionID,verifyAnswerID.checkValidAnswerID,verifyDelete.checkDelete], awscontroller.deleteFileFromAnswer);
+
 };

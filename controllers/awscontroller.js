@@ -87,7 +87,6 @@ exports.attachFileWithAnswer = async (req, res) => {
     }).then((file) => {
         console.log("FILE DATA POSTED SUCESSFULLY!", file)
         params.Key = file.s3_object_name;
-
     })
     await s3Client.upload(params, (err, data) => {
         if (err) {
