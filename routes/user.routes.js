@@ -45,6 +45,6 @@ module.exports = function(app) {
   
   app.delete("/v1/question/:qid/file/:fid", [auth.BasicAuth,verifyQuestion.checkValidQuestionID,verifyDelete.checkDelete], awscontroller.deleteFileFromQuestion);
   
-  app.delete("/v1/question/:qid/answer/:aid/file/:fid", [auth.BasicAuth,verifyQuestion.checkValidQuestionID,verifyAnswerID.checkValidAnswerID,verifyDelete.checkDelete], awscontroller.deleteFileFromAnswer);
+  app.delete("/v1/question/:qid/answer/:aid/file/:fid", [auth.BasicAuth,verifyQuestion.checkValidQuestionID,verifyAnswerID.checkValidAnswerID,verifyDeleteAnswer.checkAnswerDelete], awscontroller.deleteFileFromAnswer);
 
 };
