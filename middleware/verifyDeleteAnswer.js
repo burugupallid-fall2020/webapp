@@ -10,7 +10,7 @@ checkAnswerDelete = (req, res, next) => {
         console.log(answer.userId)
         if (answer.userId !== req.user.id) {
             res.status(401).send({
-                message: "You are not authorised to delete the question"
+                message: "You are not authorised to delete the answer"
             });
             return;
         }

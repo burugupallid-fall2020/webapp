@@ -1,7 +1,11 @@
 const db = require("../models");
+const s3 = require('../config/s3.config.js');
+const CategoryQuestions = db.CategoryQuestions;
 const Question = db.question;
 const Answer = db.answer;
 const Category = db.category;
+const env = require('../config/s3.env');
+const File = db.file
 
 // create a question
 exports.createQuestion = (req, res) => {
@@ -50,19 +54,22 @@ exports.createQuestion = (req, res) => {
                 {
                     model: Answer,
                     attributes: ["answer_text"],
+                },
+                {
+                    model: File,
                 }
             ]
         }).then(data => {
             setTimeout(async function () {
                 res.status(201).send({
-                        "question_id": data.id,
-                        "created_timestamp": data.createdAt,
-                        "updated_timestamp": data.updatedAt,
-                        "user_id": data.userId,
-                        "question_text": data.question_text,
+                    "question_id": data.id,
+                    "created_timestamp": data.createdAt,
+                    "updated_timestamp": data.updatedAt,
+                    "user_id": data.userId,
+                    "question_text": data.question_text,
                     categories: categories_array
                 })
-            },100)
+            }, 100)
         })
     }).catch(err => {
         err
@@ -84,11 +91,11 @@ exports.createAnswer = (req, res,) => {
     }).then((answer) => {
         return res.send({
             "answer_id": answer.id,
-                "question_id": answer.questionId,
-                "created_timestamp": answer.createdAt,
-                "updated_timestamp": answer.updatedAt,
-                "user_id": answer.userId,
-                "answer_text": answer.answer_text
+            "question_id": answer.questionId,
+            "created_timestamp": answer.createdAt,
+            "updated_timestamp": answer.updatedAt,
+            "user_id": answer.userId,
+            "answer_text": answer.answer_text
         })
     }).catch((err) => {
         err
@@ -102,7 +109,6 @@ exports.updateAnswer = (req, res,) => {
             "message": "Answer Text cannot be empty"
         })
     }
-  
     Answer.update({
         answer_text: req.body.answer_text
     }, {
@@ -137,14 +143,31 @@ exports.updateAnswer = (req, res,) => {
         });
 };
 
-exports.deleteQuestion = (req, res) => {
+exports.deleteQuestion = async (req, res) => {
+  
     Answer.findOne({
         where: {
             questionId: req.params.qid
         }
-    }).then(answer => {
-        console.log(answer+"---------")
+    }).then(async answer => {
+        console.log(answer + "---------")
         if (!answer) {
+            const s3Client = s3.s3Client;
+            const image_file = await File.findAll({
+                where: {
+                    questionId: req.params.qid
+                }
+            })
+            for (i = 0; i < image_file.length; i++) {
+                const file_s3name = await File.findByPk(image_file[i].id)
+                const params = {
+                    Bucket: env.Bucket,
+                    Key: file_s3name.s3_object_name
+                }
+                s3Client.deleteObject(params, function (err) {
+                    if (err) console.log(err, err.stack);
+                });
+            }
             Question.destroy({
                 where: {
                     id: req.params.qid
@@ -165,7 +188,23 @@ exports.deleteQuestion = (req, res) => {
         });
 };
 
-exports.deleteAnswer = (req, res,) => {
+exports.deleteAnswer = async (req, res,) => {
+    const s3Client = s3.s3Client;
+    const image_file = await File.findAll({
+        where: {
+            answerId: req.params.aid
+        }
+    })
+    for (i = 0; i < image_file.length; i++) {
+        const file_s3name = await File.findByPk(image_file[i].id)
+        const params = {
+            Bucket: env.Bucket,
+            Key: file_s3name.s3_object_name
+        }
+        s3Client.deleteObject(params, function (err) {
+            if (err) console.log(err, err.stack);
+        });
+    }
     Answer.destroy({
         where: { id: req.params.aid }
     })
@@ -183,6 +222,13 @@ exports.updateQuestion = (req, res,) => {
             "message": "Question Text cannot be empty"
         })
     }
+    CategoryQuestions.destroy({
+        where: { questionId: req.params.qid }
+    }).then(() => {
+
+    }).catch((err) => {
+        err
+    })
     Question.update({
         question_text: req.body.question_text
     }, {
@@ -190,7 +236,7 @@ exports.updateQuestion = (req, res,) => {
     }, {
 
     }).then(() => {
-        Question.findByPk(req.params.qid).then((question)=>{
+        Question.findByPk(req.params.qid).then((question) => {
             for (let i = 0; i < req.body.categories.length; i++) {
                 Category.findOne({
                     where: {
@@ -211,6 +257,7 @@ exports.updateQuestion = (req, res,) => {
         })
     })
         .then(data => {
+            setTimeout(async function () {
                 Question.findByPk(req.params.qid, {
                     include: [
                         {
@@ -221,7 +268,10 @@ exports.updateQuestion = (req, res,) => {
                         },
                         {
                             model: Answer,
-                            attributes: ["answer_text","id", "createdAt","updatedAt"],
+                            attributes: ["answer_text", "id", "createdAt", "updatedAt"],
+                        },
+                        {
+                            model: File,
                         }
                     ]
                 }).then((question) => {
@@ -231,6 +281,7 @@ exports.updateQuestion = (req, res,) => {
                 }).catch(err => {
                     err
                 })
+            }, 100);
         });
 };
 
@@ -276,12 +327,15 @@ exports.getAllQuestions = (req, res,) => {
             {
                 model: Answer,
                 attributes: ["answer_text", "id", "createdAt", "updatedAt"],
-            }
+            },
+            {
+                model: File
+            },
         ]
 
     }).then((question) => {
         return res.status(201).send(
-           question
+            question
         )
 
     }).catch(err => {
@@ -301,7 +355,10 @@ exports.getQuestion = (req, res,) => {
             },
             {
                 model: Answer,
-                attributes: ["answer_text","id", "createdAt","updatedAt"],
+                attributes: ["answer_text", "id", "createdAt", "updatedAt"],
+            },
+            {
+                model: File,
             }
         ]
     }).then((question) => {
