@@ -2,7 +2,6 @@
 
 cd /home/ubuntu
 echo "delete the previous version webapp"
-
 sudo rm -rf webapp
 echo "get the proces id"
 PID=`ps -eaf | grep "node app.js" | grep -v grep | awk '{print $2}'`
