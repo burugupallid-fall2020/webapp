@@ -1,3 +1,5 @@
+#!/bin/bash
+echo "Present working Directly"
 pwd
 ls -lrt
 sudo unzip build_artifact.zip
