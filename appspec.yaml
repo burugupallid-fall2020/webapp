@@ -7,7 +7,7 @@ files:
     destination: /home/ubuntu/webapp
 
 hooks:
-  applicationStop:
+  ApplicationStop:
     - location: ./codedeploy/applicationStop.sh
       timeout: 300
     
@@ -21,4 +21,8 @@ hooks:
 
   ApplicationStart:
     - location: ./codedeploy/applicationStart.sh
+      timeout: 300
+
+  ValidateService:
+    - location: ./codedeploy/validateService.sh
       timeout: 300
