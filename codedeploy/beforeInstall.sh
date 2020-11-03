@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo "------Executing Before Install-------"
+TIMESTAMP=`date "+%Y-%m-%d %H:%M:%S"`
+echo "$TIMESTAMP"
+
 cd /home/ubuntu
 echo "delete the previous version webapp"
 sudo rm -rf webapp
@@ -10,3 +14,6 @@ if [[ "" !=  "$PID" ]]; then
   echo "killing $PID"
   sudo kill -9 $PID
 fi
+TIMESTAMP=`date "+%Y-%m-%d %H:%M:%S"`
+echo "$TIMESTAMP"
+echo "------End of Before Install-------"
