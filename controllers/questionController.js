@@ -331,7 +331,6 @@ exports.getAllQuestions = (req, res,) => {
             },
             {
                 model: Answer,
-                attributes: ["answer_text", "id", "createdAt", "updatedAt"],
                 include:[
                     {
                         model:File

@@ -39,6 +39,7 @@ db.question.belongsTo(db.user, {
 });
 
 db.question.hasMany(db.file, { onDelete: "cascade" });
+db.answer.hasMany(db.file, { onDelete: "cascade" });
 
 db.file.belongsTo(db.user, {
   foreignKey: "userId",
