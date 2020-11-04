@@ -69,7 +69,6 @@ Delete a question's answer
 ```
 DELETE - Authenticated Route to delete a question
 http://{APP_URL}/v1​/question​/{question_id}
-Delete a question
 ```
 
 ```
