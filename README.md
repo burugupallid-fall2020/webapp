@@ -42,5 +42,56 @@ User can update the information
 GET - API with user authentication using Basic Auth
 http://{APP_URL}/v1/user/self
 ```
+
+```
+POST - Authenticated Route to post a question 
+http://{APP_URL}/v1/question
+```
+
+```
+POST - Authenticated Route to post a answer to question 
+http://{APP_URL}/v1/question/{question_id}/answer
+```
+
+```
+PUT - Authenticated Route to update a answer to a question 
+http://{APP_URL}/v1​/question​/{question_id}​/answer​/{answer_id}
+​
+Update a question's answer
+```
+
+```
+DELETE - Authenticated Route to delete a answer to a question
+http://{APP_URL}/v1/question/{question_id}/answer/{answer_id}
+Delete a question's answer
+```
+
+```
+DELETE - Authenticated Route to delete a question
+http://{APP_URL}/v1​/question​/{question_id}
+Delete a question
+```
+
+```
+PUT - Authenticated Route to Update a question with question id
+http://{APP_URL}​/v1​/question​/{question_id}
+```
+
+```
+POST - Authenticated Route Upload a file to question
+http://{APP_URL}​/v1/question/{question_id}/file
+```
+
+```
+POST - Authenticated Route Upload a file to a answer
+http://{APP_URL}​/v1/question/{question_id}/answer/{answer_id}/file
+```
+
+```
+DELETE - Authenticated Route delete a file to a answer
+​http://{APP_URL}/v1​/question​/{question_id}​/file​/{file_id}
+```
+
+
 User sign in using authentication credentials user_name and password. 
 

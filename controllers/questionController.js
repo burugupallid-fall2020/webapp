@@ -292,7 +292,12 @@ exports.getQuestionsAnswer = (req, res,) => {
         where: {
             questionId: req.params.qid,
             id: req.params.aid
-        }
+        },
+        include: [
+            {
+                model: File
+            }
+        ]
     }).then((answer) => {
 
         if (!answer) {
@@ -327,10 +332,15 @@ exports.getAllQuestions = (req, res,) => {
             {
                 model: Answer,
                 attributes: ["answer_text", "id", "createdAt", "updatedAt"],
+                include:[
+                    {
+                        model:File
+                    }
+                ]
             },
             {
                 model: File
-            },
+            }
         ]
 
     }).then((question) => {
@@ -356,6 +366,11 @@ exports.getQuestion = (req, res,) => {
             {
                 model: Answer,
                 attributes: ["answer_text", "id", "createdAt", "updatedAt"],
+                include:[
+                    {
+                        model:File
+                    }
+                ]
             },
             {
                 model: File,
