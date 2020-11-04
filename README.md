@@ -4,8 +4,8 @@ Technology stack used for this application is MySQL & Node JS
 
 ### Installation
 ```
-Install Node JS 
-Install MySQL
+Install Node JS
+Install MySQL & Sequelize
 ```
 ### Running the Web application
 
