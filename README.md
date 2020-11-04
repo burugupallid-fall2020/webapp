@@ -1,6 +1,6 @@
 # webapp
 
-Technology stack used for this application is MySQL and Node JS
+Technology stack used for this application is MySQL & Node JS
 
 ### Installation
 ```
