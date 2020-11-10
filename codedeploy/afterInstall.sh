@@ -11,5 +11,10 @@ pwd
 ls -lrt
 cd ..
 TIMESTAMP=`date "+%Y-%m-%d %H:%M:%S"`
+sudo cp /home/ubuntu/webapp/codedeploy/cloudwatch-config.json /opt/aws/amazon-cloudwatch-agent/etc/
+x
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/etc/cloudwatch-config.json -s
+TIMESTAMP=`date "+%Y-%m-%d %H:%M:%S"`
+
 echo "$TIMESTAMP"
 echo "------End of after install-------"
