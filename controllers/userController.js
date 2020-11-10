@@ -2,8 +2,12 @@ const db = require("../models");
 const User = db.user;
 const Question = db.question;
 var bcrypt = require("bcryptjs");
+const SDC = require(''),
+sdc = new SDC({host: 'localhost' , port:8125});
 
 exports.signup = (req, res) => {
+    sdc.increment('SignUp User Triggered');
+    let timer = new Date();
     if(!req.body.first_name){
         return res.send(400).return({
             "message":"First name cannot be Empty"
@@ -33,6 +37,8 @@ exports.signup = (req, res) => {
         .catch(err => {
             res.status(500).send({ message: err.message });
         });
+    sdc.timing('put.user.time', timer);
+
 };
 
 exports.signin = (req, res) => {
