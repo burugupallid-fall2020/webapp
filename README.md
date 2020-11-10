@@ -1,4 +1,4 @@
-# webapp
+# Webapp
 
 Technology stack used for this application is MySQL & Node JS
 
