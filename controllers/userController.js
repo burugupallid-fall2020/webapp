@@ -3,10 +3,12 @@ const User = db.user;
 const Question = db.question;
 var bcrypt = require("bcryptjs");
 var SDC = require('statsd-client'),
-	sdc = new SDC({port: 8125});
+    sdc = new SDC({port: 8125});
+var logger = require('../config/winston');
 
 
 exports.signup = (req, res) => {
+    logger.log('signup handler began');
     sdc.increment('SignUp User Triggered');
     let timer = new Date();
     if(!req.body.first_name){
@@ -39,7 +41,6 @@ exports.signup = (req, res) => {
             res.status(500).send({ message: err.message });
         });
    sdc.timing('put.user.time', timer);
-
 };
 
 exports.signin = (req, res) => {

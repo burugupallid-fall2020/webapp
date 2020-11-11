@@ -4,6 +4,7 @@ const cors = require("cors");
 const PORT = process.env.PORT || 8080;
 const app = express();
 const db = require("./models");
+var morgan = require('morgan');
 
 var optionOfCors = {
   origin: "http://localhost:8080"
@@ -19,6 +20,7 @@ db.sequelize.sync({force: true}).then(() => {
 app.use(cors(optionOfCors));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan('combined', { stream: winston.stream }));
 
 // Adding the healht check on the '/' route
 app.get("/", (req, res) => {

@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "app-root-path": "^3.0.0",
     "aws-sdk": "^2.773.0",
     "basic-auth": "^2.0.1",
     "bcryptjs": "^2.4.3",
@@ -26,6 +27,7 @@
     "sequelize-noupdate-attributes": "^1.0.0",
     "should": "^13.2.3",
     "statsd-client": "^0.4.5",
-    "supertest": "^5.0.0"
+    "supertest": "^5.0.0",
+    "winston": "^3.3.3"
   }
 }
