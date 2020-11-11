@@ -86,7 +86,6 @@ exports.createQuestion = (req, res) => {
     })
 };
 
-
 // create a answer
 exports.createAnswer = (req, res,) => {
     logger.info('create answer handler began');
@@ -227,6 +226,7 @@ exports.deleteAnswer = async (req, res,) => {
     sdc.increment('deleteanswer.counter');
     let timer = new Date();
     let db_timer = new Date();
+    let s3_timer = new Date();
     const s3Client = s3.s3Client;
     const image_file = await File.findAll({
         where: {
