@@ -2,7 +2,7 @@ const db = require("../models");
 const User = db.user;
 const Question = db.question;
 var bcrypt = require("bcryptjs");
-var SDC = require('node-statsd'),
+var SDC = require('statsd-client'),
 	sdc = new SDC({port: 8125});
 
 
