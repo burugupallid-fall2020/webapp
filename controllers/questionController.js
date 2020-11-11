@@ -6,15 +6,23 @@ const Answer = db.answer;
 const Category = db.category;
 const env = require('../config/s3.env');
 const File = db.file
+var sdc = require("../config/statsdclient")
+var log4js = require('../config/log4js')
+const logger = log4js.getLogger('logs');
 
 // create a question
 exports.createQuestion = (req, res) => {
+    logger.info('create question handler began');
+    sdc.increment('createquestion.counter');
+    let timer = new Date();
     let categories_array = []
     if (!req.body.question_text) {
+        logger.error('question text is empty');
         res.status(400).send({
             "message": "Question-text cannot be blank"
         })
     }
+    let db_timer = new Date();
     Question.create({
         question_text: req.body.question_text,
         userId: req.user.id,
@@ -60,6 +68,7 @@ exports.createQuestion = (req, res) => {
                 }
             ]
         }).then(data => {
+            sdc.timing("db.create.question",db_timer)
             setTimeout(async function () {
                 res.status(201).send({
                     "question_id": data.id,
@@ -71,6 +80,7 @@ exports.createQuestion = (req, res) => {
                 })
             }, 100)
         })
+        sdc.timing("create.question",timer)
     }).catch(err => {
         err
     })
@@ -79,16 +89,23 @@ exports.createQuestion = (req, res) => {
 
 // create a answer
 exports.createAnswer = (req, res,) => {
+    logger.info('create answer handler began');
+    sdc.increment('createanswer.counter');
+    let timer = new Date();
     if (!req.body.answer_text) {
+        logger.error('create answer handler began');
         return res.status(400).send({
             "message": "Answer Text cannot be empty"
         })
     }
+    let db_timer = new Date();
     Answer.create({
         answer_text: req.body.answer_text,
         questionId: req.params.qid,
         userId: req.user.id
     }).then((answer) => {
+        sdc.timing("db.create.answer",db_timer)
+        sdc.timing("create.anwer",timer )
         return res.send({
             "answer_id": answer.id,
             "question_id": answer.questionId,
@@ -104,11 +121,16 @@ exports.createAnswer = (req, res,) => {
 
 // update a questions answer
 exports.updateAnswer = (req, res,) => {
+    logger.info('update answer handler began');
+    sdc.increment('updateanswer.counter');
+    let timer = new Date();
     if (!req.body.answer_text) {
+        logger.error('update answer handler began');
         return res.status(400).send({
             "message": "Answer Text cannot be empty"
         })
     }
+    let db_timer = new Date();
     Answer.update({
         answer_text: req.body.answer_text
     }, {
@@ -128,6 +150,7 @@ exports.updateAnswer = (req, res,) => {
                 id: req.params.aid,
             }
         }).then(result => {
+            sdc.timing("db.update.answer",db_timer)
             res.send({
                 "answer_id": result.id,
                 "question_id": result.questionId,
@@ -136,6 +159,7 @@ exports.updateAnswer = (req, res,) => {
                 "user_id": result.userId,
                 "answer_text": result.answer_text
             });
+            sdc.timing("create.anwer",timer )
         })
     })
         .catch(err => {
@@ -144,7 +168,10 @@ exports.updateAnswer = (req, res,) => {
 };
 
 exports.deleteQuestion = async (req, res) => {
-  
+    logger.info('delete question handler began');
+    sdc.increment('deletequestion.counter');
+    let timer = new Date();
+    let db_timer = new Date();
     Answer.findOne({
         where: {
             questionId: req.params.qid
@@ -152,6 +179,7 @@ exports.deleteQuestion = async (req, res) => {
     }).then(async answer => {
         console.log(answer + "---------")
         if (!answer) {
+            let s3_timer= new Date();
             const s3Client = s3.s3Client;
             const image_file = await File.findAll({
                 where: {
@@ -167,17 +195,23 @@ exports.deleteQuestion = async (req, res) => {
                 s3Client.deleteObject(params, function (err) {
                     if (err) console.log(err, err.stack);
                 });
+                logger.info('object deleted from s3 bucket');
+                sdc.timing("s3.deletefilequestion",s3_timer)
             }
             Question.destroy({
                 where: {
                     id: req.params.qid
                 }
             })
+            sdc.timing("db.delete.question", db_timer)
+            logger.info("question deleted successfully")
             res.status(201).send({
                 message: "Question Deleted Successfully!!"
             });
+            sdc.timing("delete.question", timer)
         }
         else {
+            logger.error("question cannot be deletred")
             res.status(404).send({
                 msg: "Question cannot be Deleted!!"
             });
@@ -189,6 +223,10 @@ exports.deleteQuestion = async (req, res) => {
 };
 
 exports.deleteAnswer = async (req, res,) => {
+    logger.info('delete answer handler began');
+    sdc.increment('deleteanswer.counter');
+    let timer = new Date();
+    let db_timer = new Date();
     const s3Client = s3.s3Client;
     const image_file = await File.findAll({
         where: {

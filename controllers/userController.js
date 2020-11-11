@@ -2,30 +2,25 @@ const db = require("../models");
 const User = db.user;
 const Question = db.question;
 var bcrypt = require("bcryptjs");
-var SDC = require('statsd-client'),
-    sdc = new SDC({port: 8125});
-const log4js = require('log4js');
-    log4js.configure({
-        appenders: { logs: { type: 'file', filename: './logs/webapp.log' }},
-        categories: { default: { appenders: ['logs'], level: 'info' }}
-    });
+var sdc = require("../config/statsdclient")
+var log4js = require('../config/log4js')
 const logger = log4js.getLogger('logs');
 
 exports.signup = (req, res) => {
     logger.info('signup handler began');
-    sdc.increment('SignUp User Triggered');
+    sdc.increment('signup.counter');
     let timer = new Date();
-    let db_timer= new Date();
-    if(!req.body.first_name){
+    let db_timer = new Date();
+    if (!req.body.first_name) {
         logger.error('Invalid FirstName');
         return res.send(400).return({
-            "message":"First name cannot be Empty"
+            "message": "First name cannot be Empty"
         })
     }
-    else if(!req.body.last_name){
+    else if (!req.body.last_name) {
         logger.error('Invalid Last');
         return res.send(400).return({
-            "message":"last name cannot be Empty"
+            "message": "last name cannot be Empty"
         })
     }
     // Save User to Database
@@ -49,19 +44,21 @@ exports.signup = (req, res) => {
         .catch(err => {
             res.status(500).send({ message: err.message });
         });
-   logger.info('signup handler completed');
+    logger.info('signup handler completed');
 };
 
 exports.signin = (req, res) => {
-    sdc.increment('Signin User Triggered');
+    logger.info('signin handler began');
+    sdc.increment('signin.counter');
     let timer = new Date();
-    let db_timer= new Date();
+    let db_timer = new Date();
     User.findOne({
         where: {
             email: req.user.email
         }
     })
         .then(user => {
+            sdc.timing('db.get.user.time', db_timer);
             if (!user) {
                 return res.status(404).send({ message: "User Not found." });
             }
@@ -71,25 +68,33 @@ exports.signin = (req, res) => {
                 last_name: user.last_name,
                 username: user.email,
             });
+            sdc.timing('get.user.time', timer);
         })
         .catch(err => {
             res.status(500).send({ message: err.message });
         });
+    logger.info("signup handler completed")
 };
 
 exports.update = (req, res) => {
-    if(!req.body.first_name){
+    logger.info('updateuser handler began');
+    sdc.increment('update.user.counter');
+    let timer = new Date();
+    if (!req.body.first_name) {
+        logger.error('Invalid FirstName');
         return res.send(400).return({
-            "message":"First name cannot be Empty"
+            "message": "First name cannot be Empty"
         })
     }
 
-    else if(!req.body.last_name){
+    else if (!req.body.last_name) {
+        logger.error('Invalid LastName');
         return res.send(400).return({
-            "message":"last name cannot be Empty"
+            "message": "last name cannot be Empty"
         })
     }
     // Save User to Database
+    let db_timer = new Date();
     User.update({
         first_name: req.body.first_name,
         last_name: req.body.last_name,
@@ -104,6 +109,8 @@ exports.update = (req, res) => {
                 email: req.user.email
             }
         }).then(user => {
+            sdc.timing('db.update.user.time', db_timer);
+            ssdc.timing('update.user.time', timer);
             res.send({
                 firstname: user.first_name,
                 last_name: user.last_name,
@@ -117,12 +124,19 @@ exports.update = (req, res) => {
 };
 
 
-exports.getUserDetails=(req,res)=>{
+exports.getUserDetails = (req, res) => {
+    logger.info('updateuser handler began');
+    sdc.increment('update.user.counter');
+    let timer = new Date();
+    let dbtimer = new Date();
     User.findByPk(req.params.id)
         .then(user => {
             if (!user) {
+                logger.error("Invalid User")
                 return res.status(404).send({ message: "User Not found." });
             }
+            sdc.timing('db.get.userid.time', db_timer);
+            sdc.timing('get.userid.time', timer);
             res.status(200).send({
                 id: user.id,
                 first_name: user.first_name,
