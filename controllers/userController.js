@@ -3,18 +3,28 @@ const User = db.user;
 const Question = db.question;
 var bcrypt = require("bcryptjs");
 var SDC = require('statsd-client'),
-	sdc = new SDC({port: 8125});
-
+    sdc = new SDC({port: 8125});
+const log4js = require('log4js');
+    log4js.configure({
+        appenders: { logs: { type: 'file', filename: './logs/webapp.log' } },
+        categories: { default: { appenders: ['logs'], level: 'info' } }
+    });
+const logger = log4js.getLogger('logs');
 
 exports.signup = (req, res) => {
+    logger.info('signup handler began');
     sdc.increment('SignUp User Triggered');
     let timer = new Date();
     if(!req.body.first_name){
+        logger.error('Invalid FirstName');
+
         return res.send(400).return({
             "message":"First name cannot be Empty"
         })
     }
     else if(!req.body.last_name){
+        logger.error('Invalid Last');
+
         return res.send(400).return({
             "message":"last name cannot be Empty"
         })
@@ -39,6 +49,7 @@ exports.signup = (req, res) => {
             res.status(500).send({ message: err.message });
         });
    sdc.timing('put.user.time', timer);
+   logger.info('signup handler completed');
 
 };
 
