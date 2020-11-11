@@ -27,6 +27,6 @@
     "sequelize-noupdate-attributes": "^1.0.0",
     "should": "^13.2.3",
     "statsd-client": "^0.4.5",
-    "supertest": "^5.0.0",
+    "supertest": "^5.0.0"
   }
 }
