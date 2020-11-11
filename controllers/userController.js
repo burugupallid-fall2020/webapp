@@ -6,8 +6,8 @@ var SDC = require('statsd-client'),
     sdc = new SDC({port: 8125});
 const log4js = require('log4js');
     log4js.configure({
-        appenders: { logs: { type: 'file', filename: './logs/webapp.log' } , error_logs: { type: 'file', filename: './logs/error.log' }},
-        categories: { default: { appenders: ['logs'], level: 'info' } , default: { appenders: ['error_logs'], level: 'error' }}
+        appenders: { logs: { type: 'file', filename: './logs/webapp.log' }},
+        categories: { default: { appenders: ['logs'], level: 'info' }}
     });
 const logger = log4js.getLogger('logs');
 
