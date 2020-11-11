@@ -6,8 +6,8 @@ var SDC = require('statsd-client'),
     sdc = new SDC({port: 8125});
 const log4js = require('log4js');
     log4js.configure({
-        appenders: { logs: { type: 'file', filename: './logs/webapp.log' } },
-        categories: { default: { appenders: ['logs'], level: 'info' } }
+        appenders: { logs: { type: 'file', filename: './logs/webapp.log' } , error_logs: { type: 'file', filename: './logs/error.log' }},
+        categories: { default: { appenders: ['logs'], level: 'info' } , default: { appenders: ['error_logs'], level: 'error' }}
     });
 const logger = log4js.getLogger('logs');
 
@@ -15,16 +15,15 @@ exports.signup = (req, res) => {
     logger.info('signup handler began');
     sdc.increment('SignUp User Triggered');
     let timer = new Date();
+    let db_timer= new Date();
     if(!req.body.first_name){
         logger.error('Invalid FirstName');
-
         return res.send(400).return({
             "message":"First name cannot be Empty"
         })
     }
     else if(!req.body.last_name){
         logger.error('Invalid Last');
-
         return res.send(400).return({
             "message":"last name cannot be Empty"
         })
@@ -36,6 +35,7 @@ exports.signup = (req, res) => {
         email: req.body.email,
         password: bcrypt.hashSync(req.body.password, 8)
     }).then((user) => {
+        sdc.timing('db.put.user.time', db_timer);
         res.status(200).send({
             id: user.id,
             first_name: user.first_name,
@@ -44,16 +44,18 @@ exports.signup = (req, res) => {
             account_created: user.createdAt,
             account_updated: user.updatedAt,
         });
+        sdc.timing('put.user.time', timer);
     })
         .catch(err => {
             res.status(500).send({ message: err.message });
         });
-   sdc.timing('put.user.time', timer);
    logger.info('signup handler completed');
-
 };
 
 exports.signin = (req, res) => {
+    sdc.increment('Signin User Triggered');
+    let timer = new Date();
+    let db_timer= new Date();
     User.findOne({
         where: {
             email: req.user.email
