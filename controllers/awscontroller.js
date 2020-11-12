@@ -10,7 +10,7 @@ const logger = log4js.getLogger('logs');
 
 exports.attachFileWithQuestion = async (req, res) => {
     logger.info("attachFileWithQuestion handler started")
-    sdc.increment("attachFilewithQuestion.count")
+    sdc.increment("attachFilewithQuestion-counter")
     let timer = new Date();
     
     if(!req.file.originalname.match(/\.(jpg|jpeg|png)$/i)) {
@@ -73,7 +73,7 @@ exports.attachFileWithQuestion = async (req, res) => {
 //Attach a File to Answer
 exports.attachFileWithAnswer = async (req, res) => {
     logger.info("attachFileWithAnswer Handler Started")
-    sdc.increment("attachFileWithAnswer.count")
+    sdc.increment("attachFileWithAnswer-counter")
     let timer = new Date();
     if(!req.file.originalname.match(/\.(jpg|jpeg|png)$/i)) {
         logger.error("Incorrect Image Format")
@@ -136,7 +136,7 @@ exports.attachFileWithAnswer = async (req, res) => {
 //Delete a file from Question
 exports.deleteFileFromQuestion = (req, res) => {
     logger.info("deleteFileFromQuestion Handler Started")
-    sdc.increment("attachFileWithAnswer.count")
+    sdc.increment("attachFileWithAnswer-counter")
     let timer = new Date();
     const s3Client = s3.s3Client;
     let db_timer = new Date();
@@ -168,7 +168,7 @@ exports.deleteFileFromQuestion = (req, res) => {
 //Delete a file from Answer
 exports.deleteFileFromAnswer = (req, res) => {
     logger.info("deleteFileFromAnswer handler Started")
-    sdc.increment("attachFileWithAnswer.count")
+    sdc.increment("attachFileWithAnswer-counter")
     let timer = new Date();
     const s3Client = s3.s3Client;
     let db_timer = new Date();

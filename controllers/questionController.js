@@ -13,7 +13,7 @@ const logger = log4js.getLogger('logs');
 // create a question
 exports.createQuestion = (req, res) => {
     logger.info('createQuestion handler started');
-    sdc.increment('createquestion.counter');
+    sdc.increment('createquestion-counter');
     let timer = new Date();
     let categories_array = []
     if (!req.body.question_text) {
@@ -90,7 +90,7 @@ exports.createQuestion = (req, res) => {
 // create a answer
 exports.createAnswer = (req, res,) => {
     logger.info('createAnswer handler Started');
-    sdc.increment('createanswer.counter');
+    sdc.increment('createanswer-counter');
     let timer = new Date();
     if (!req.body.answer_text) {
         logger.error('create answer handler began');
@@ -123,7 +123,7 @@ exports.createAnswer = (req, res,) => {
 // update a questions answer
 exports.updateAnswer = (req, res,) => {
     logger.info('updateAnswer handler Started');
-    sdc.increment('updateanswer.counter');
+    sdc.increment('updateanswer-counter');
     let timer = new Date();
     if (!req.body.answer_text) {
         logger.error('update answer handler began');
@@ -171,7 +171,7 @@ exports.updateAnswer = (req, res,) => {
 
 exports.deleteQuestion = async (req, res) => {
     logger.info('deleteQuestion handler Completed');
-    sdc.increment('deletequestion.counter');
+    sdc.increment('deletequestion-counter');
     let timer = new Date();
     let db_timer = new Date();
     Answer.findOne({
@@ -226,7 +226,7 @@ exports.deleteQuestion = async (req, res) => {
 
 exports.deleteAnswer = async (req, res,) => {
     logger.info('delete answer handler began');
-    sdc.increment('deleteanswer.counter');
+    sdc.increment('deleteanswer-counter');
     let timer = new Date();
     let db_timer = new Date();
     let s3_timer = new Date();
@@ -265,7 +265,7 @@ exports.deleteAnswer = async (req, res,) => {
 exports.updateQuestion = (req, res,) => {
     logger.info("inside handler question")
     let timer = new Date();
-    sdc.increment("updatequestioncounter")
+    sdc.increment("updatequestion-counter")
     if (!req.body.question_text) {
         logger.error("question text is empty")
         return res.status(400).send({
@@ -343,7 +343,7 @@ exports.updateQuestion = (req, res,) => {
 
 exports.getQuestionsAnswer = (req, res,) => {
     logger.info("started handler get all questions")
-    sdc.increment("getallquestions.count")
+    sdc.increment("getquestionanswer-counter")
     let timer = new Date();
     let db_timer = new Date();
     Answer.findOne({
@@ -383,7 +383,7 @@ exports.getQuestionsAnswer = (req, res,) => {
 // get all questions 
 exports.getAllQuestions = (req, res,) => {
     logger.info("started handler get all questions")
-    sdc.increment("getallquestions.count")
+    sdc.increment("getallquestions-counter")
     let timer = new Date();
     let db_timer = new Date();
     Question.findAll({
@@ -424,7 +424,7 @@ exports.getAllQuestions = (req, res,) => {
 // get question by ID 
 exports.getQuestion = (req, res,) => {
     logger.info("started handler get question by id")
-    sdc.increment("getallquestions.count")
+    sdc.increment("getquestionid-counter")
     let timer = new Date();
     let db_timer = new Date();
     Question.findByPk(req.params.qid, {
