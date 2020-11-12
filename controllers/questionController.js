@@ -243,23 +243,33 @@ exports.deleteAnswer = async (req, res,) => {
             if (err) console.log(err, err.stack);
         });
     }
+    logger.info('deleted from s3 bucket');
+    sdc.timing("s3.deleteanswer",s3_timer)
     Answer.destroy({
         where: { id: req.params.aid }
     })
         .then(data => {
+        sdc.timing("db.answerdelete", timer)
             res.send({
                 message: "Answer Deleted Successfully"
             })
+        sdc.timing("answerdelete", timer)
+        logger.info("answer deleted successfully")
         });
 };
 
 
 exports.updateQuestion = (req, res,) => {
+    logger.info("inside handler question")
+    let timer = new Date();
+    sdc.increment("updatequestioncounter")
     if (!req.body.question_text) {
+        logger.error("question text is empty")
         return res.status(400).send({
             "message": "Question Text cannot be empty"
         })
     }
+    let db_timer = new Date();
     CategoryQuestions.destroy({
         where: { questionId: req.params.qid }
     }).then(() => {
@@ -313,6 +323,9 @@ exports.updateQuestion = (req, res,) => {
                         }
                     ]
                 }).then((question) => {
+                    sdc.timing("db.updatequestion", db_timer)
+                    sdc.timing("updatequestion", timer)
+                    logger.error("question updated")
                     return res.status(201).send(
                         question
                     )
@@ -326,6 +339,10 @@ exports.updateQuestion = (req, res,) => {
 // -------  Public Routes ----------
 
 exports.getQuestionsAnswer = (req, res,) => {
+    logger.info("started handler get all questions")
+    sdc.increment("getallquestions.count")
+    let timer = new Date();
+    let db_timer = new Date();
     Answer.findOne({
         where: {
             questionId: req.params.qid,
@@ -337,12 +354,15 @@ exports.getQuestionsAnswer = (req, res,) => {
             }
         ]
     }).then((answer) => {
-
+        sdc.timing("db.getquestionanswer", db_timer)
+        sdc.timing("getquestionanswer",timer)
         if (!answer) {
+            logger.error("invalid question id or answer id")
             return res.send({
                 message: "Invalid Question ID or Answer ID"
             })
         } else {
+            logger.info("sending response for getallquestions")
             return res.send({
                 "answer_id": answer.id,
                 "question_id": answer.questionId,
@@ -359,6 +379,10 @@ exports.getQuestionsAnswer = (req, res,) => {
 
 // get all questions 
 exports.getAllQuestions = (req, res,) => {
+    logger.info("started handler get all questions")
+    sdc.increment("getallquestions.count")
+    let timer = new Date();
+    let db_timer = new Date();
     Question.findAll({
         include: [
             {
@@ -381,9 +405,13 @@ exports.getAllQuestions = (req, res,) => {
         ]
 
     }).then((question) => {
+        sdc.timing("db.getallquestions", db_timer)
+        sdc.timing("getallquestions",timer)
+        logger.info("sending response for getallquestions")
         return res.status(201).send(
             question
         )
+        
 
     }).catch(err => {
         err
@@ -392,6 +420,10 @@ exports.getAllQuestions = (req, res,) => {
 
 // get question by ID 
 exports.getQuestion = (req, res,) => {
+    logger.info("started handler get question by id")
+    sdc.increment("getallquestions.count")
+    let timer = new Date();
+    let db_timer = new Date();
     Question.findByPk(req.params.qid, {
         include: [
             {
@@ -414,6 +446,9 @@ exports.getQuestion = (req, res,) => {
             }
         ]
     }).then((question) => {
+        sdc.timing("db.getquestionbid", db_timer)
+        sdc.timing("getquestionbyid",timer)
+        logger.info("completed handler getquestionbyid")
         return res.status(201).send(
             question
         )

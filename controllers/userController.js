@@ -128,7 +128,7 @@ exports.getUserDetails = (req, res) => {
     logger.info('updateuser handler began');
     sdc.increment('update.user.counter');
     let timer = new Date();
-    let dbtimer = new Date();
+    let db_timer = new Date();
     User.findByPk(req.params.id)
         .then(user => {
             if (!user) {
