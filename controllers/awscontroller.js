@@ -9,7 +9,7 @@ var log4js = require('../config/log4js')
 const logger = log4js.getLogger('logs');
 
 exports.attachFileWithQuestion = async (req, res) => {
-    logger.info("started handler attach filw with question")
+    logger.info("attachFileWithQuestion handler started")
     sdc.increment("attachFilewithQuestion.count")
     let timer = new Date();
     
@@ -72,7 +72,7 @@ exports.attachFileWithQuestion = async (req, res) => {
 
 //Attach a File to Answer
 exports.attachFileWithAnswer = async (req, res) => {
-    logger.info("started handler attach filw with answer")
+    logger.info("attachFileWithAnswer Handler Started")
     sdc.increment("attachFileWithAnswer.count")
     let timer = new Date();
     if(!req.file.originalname.match(/\.(jpg|jpeg|png)$/i)) {
@@ -93,8 +93,8 @@ exports.attachFileWithAnswer = async (req, res) => {
             message: "Please attach file"
         })
     }
-
     const s3Client = s3.s3Client;
+    const params = s3.uploadParams;
     params.Body = req.file.buffer;
     var UUID = uuidv4();
     let db_timer = new Date();
@@ -113,11 +113,11 @@ exports.attachFileWithAnswer = async (req, res) => {
     let s3_timer = new Date();
     await s3Client.upload(params, (err, data) => {
         if (err) {
+            logger.error("attachFileWithAnswer S3 Bucket Error")
             res.status(500).json({ error: "Error -> " + err });
         }
     });
     sdc.timing("s3.attachFileWithAnswer", s3_timer)
-    //res.json({ message: 'File uploaded successfully!!!' + JSON.stringify(data) + data.Key });
     const file_obj = await File.findOne({
         where: {
             id: UUID,
@@ -130,13 +130,12 @@ exports.attachFileWithAnswer = async (req, res) => {
         created_date: file_obj.createdAt
     });
     sdc.timing("attachFileWithAnswer", timer)
-    logger.info("end of handler attach file with answer")
-
+    logger.info("attachFileWithAnswer Handler Completed")
 }
 
 //Delete a file from Question
 exports.deleteFileFromQuestion = (req, res) => {
-    logger.info("started handler delete file with question")
+    logger.info("deleteFileFromQuestion Handler Started")
     sdc.increment("attachFileWithAnswer.count")
     let timer = new Date();
     const s3Client = s3.s3Client;
@@ -162,14 +161,13 @@ exports.deleteFileFromQuestion = (req, res) => {
         sdc.timing("db.deletefilewithanswer", db_timer)
     })
     sdc.timing("deletefilewithanswer", timer)
-    logger.info("end of handler delete file with question")
-
+    logger.info("deleteFileFromQuestion Handler Completed")
 }
 
 
 //Delete a file from Answer
 exports.deleteFileFromAnswer = (req, res) => {
-    logger.info("start of handler delete file with answer")
+    logger.info("deleteFileFromAnswer handler Started")
     sdc.increment("attachFileWithAnswer.count")
     let timer = new Date();
     const s3Client = s3.s3Client;
@@ -195,7 +193,6 @@ exports.deleteFileFromAnswer = (req, res) => {
         sdc.timing("db.deltefilewithanswer",db_timer)
     })
     sdc.timing("deltefilewithanswer",timer)
-    logger.info("end of handler delete file with answer")
-
+    logger.info("deleteFileFromAnswer handler Ended")
 }
 
