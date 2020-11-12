@@ -161,8 +161,8 @@ exports.deleteFileFromQuestion = (req, res) => {
                 id: req.params.fid,
             }
         })
-        sdc.timing("db.deletefilewithanswer", db_timer)
-        sdc.timing("deletefilewithanswer", timer)
+        sdc.timing("db.deleteFileFromQuestion", db_timer)
+        sdc.timing("deleteFileFromQuestion", timer)
         logger.info("deleteFileFromQuestion Handler Completed")
     })
 }
