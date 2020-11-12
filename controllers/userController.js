@@ -8,7 +8,7 @@ const logger = log4js.getLogger('logs');
 
 exports.signup = (req, res) => {
     logger.info('signup handler began');
-    sdc.increment('signup.counter');
+    sdc.increment('signup-counter');
     let timer = new Date();
     let db_timer = new Date();
     if (!req.body.first_name) {
@@ -49,7 +49,7 @@ exports.signup = (req, res) => {
 
 exports.signin = (req, res) => {
     logger.info('signin handler began');
-    sdc.increment('signin.counter');
+    sdc.increment('signin-counter');
     let timer = new Date();
     let db_timer = new Date();
     User.findOne({
@@ -78,7 +78,7 @@ exports.signin = (req, res) => {
 
 exports.update = (req, res) => {
     logger.info('updateuser handler Started');
-    sdc.increment('update.user.counter');
+    sdc.increment('updateuser-counter');
     let timer = new Date();
     if (!req.body.first_name) {
         logger.error('Invalid FirstName');
@@ -86,7 +86,6 @@ exports.update = (req, res) => {
             "message": "First name cannot be Empty"
         })
     }
-
     else if (!req.body.last_name) {
         logger.error('Invalid LastName');
         return res.send(400).return({
@@ -125,8 +124,8 @@ exports.update = (req, res) => {
 
 
 exports.getUserDetails = (req, res) => {
-    logger.info('updateuser handler began');
-    sdc.increment('update.user.counter');
+    logger.info('getUserDetails handler Started');
+    sdc.increment('getuserdetails-id');
     let timer = new Date();
     let db_timer = new Date();
     User.findByPk(req.params.id)
@@ -137,7 +136,7 @@ exports.getUserDetails = (req, res) => {
             }
             sdc.timing('db.get.userid.time', db_timer);
             sdc.timing('get.userid.time', timer);
-            logger.info('updateuser handler Completed');
+            logger.info('getUserDetails handler Completed');
             res.status(200).send({
                 id: user.id,
                 first_name: user.first_name,
