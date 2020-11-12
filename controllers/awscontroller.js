@@ -48,10 +48,11 @@ exports.attachFileWithQuestion = async (req, res) => {
     let s3_timer = new Date()
     await s3Client.upload(params, (err, file) => {
         if (err) {
+            logger.error("File Upload to S3 Failed")
             res.status(500).json({ error: "Error -> " + err });
         }
         sdc.timing("s3.questionfileuploda", s3_timer)
-        logger.error("File uploaded to s3 successfully")
+        logger.info("File uploaded to s3 successfully")
         File.findOne({
             where: {
                 id: UUID,
