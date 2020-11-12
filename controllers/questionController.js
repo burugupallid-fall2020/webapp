@@ -160,7 +160,7 @@ exports.updateAnswer = (req, res,) => {
                 "user_id": result.userId,
                 "answer_text": result.answer_text
             });
-            sdc.timing("create.anwer",timer)
+            sdc.timing("update.anwer",timer)
             logger.info('updateAnswer handler Completed');
         })
     })
@@ -170,9 +170,9 @@ exports.updateAnswer = (req, res,) => {
 };
 
 exports.deleteQuestion = async (req, res) => {
+    let timer = new Date();
     logger.info('deleteQuestion handler Started');
     sdc.increment('deletequestion-counter');
-    let timer = new Date();
     let db_timer = new Date();
     Answer.findOne({
         where: {
@@ -197,7 +197,7 @@ exports.deleteQuestion = async (req, res) => {
                 s3Client.deleteObject(params, function (err) {
                     if (err) console.log(err, err.stack);
                 });
-                sdc.timing("s3.deletefilequestion",s3_timer)
+                sdc.timing("s3.deletequestion",s3_timer)
                 logger.info('object deleted from s3 bucket');
             }
             Question.destroy({
@@ -225,9 +225,9 @@ exports.deleteQuestion = async (req, res) => {
 };
 
 exports.deleteAnswer = async (req, res,) => {
+    let timer = new Date();
     logger.info('deleteAnswer handler began');
     sdc.increment('deleteanswer-counter');
-    let timer = new Date();
     let db_timer = new Date();
     let s3_timer = new Date();
     const s3Client = s3.s3Client;
