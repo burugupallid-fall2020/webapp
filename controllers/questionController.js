@@ -93,7 +93,7 @@ exports.createAnswer = (req, res,) => {
     sdc.increment('createanswer-counter');
     let timer = new Date();
     if (!req.body.answer_text) {
-        logger.error('create answer handler began');
+        logger.error('createAnswer handler began');
         return res.status(400).send({
             "message": "Answer Text cannot be empty"
         })
@@ -105,8 +105,8 @@ exports.createAnswer = (req, res,) => {
         userId: req.user.id
     }).then((answer) => {
         sdc.timing("db.create.answer",db_timer)
-        sdc.timing("create.anwer",timer )
         logger.info('createAnswer handler Completed');
+        sdc.timing("create.anwer",timer )
         return res.send({
             "answer_id": answer.id,
             "question_id": answer.questionId,
@@ -170,7 +170,7 @@ exports.updateAnswer = (req, res,) => {
 };
 
 exports.deleteQuestion = async (req, res) => {
-    logger.info('deleteQuestion handler Completed');
+    logger.info('deleteQuestion handler Started');
     sdc.increment('deletequestion-counter');
     let timer = new Date();
     let db_timer = new Date();
@@ -197,8 +197,8 @@ exports.deleteQuestion = async (req, res) => {
                 s3Client.deleteObject(params, function (err) {
                     if (err) console.log(err, err.stack);
                 });
-                logger.info('object deleted from s3 bucket');
                 sdc.timing("s3.deletefilequestion",s3_timer)
+                logger.info('object deleted from s3 bucket');
             }
             Question.destroy({
                 where: {
@@ -206,7 +206,7 @@ exports.deleteQuestion = async (req, res) => {
                 }
             })
             sdc.timing("db.delete.question", db_timer)
-            logger.info("question deleted successfully")
+            logger.info("deleteQuestion handler Completed")
             res.status(201).send({
                 message: "Question Deleted Successfully!!"
             });
@@ -225,7 +225,7 @@ exports.deleteQuestion = async (req, res) => {
 };
 
 exports.deleteAnswer = async (req, res,) => {
-    logger.info('delete answer handler began');
+    logger.info('deleteAnswer handler began');
     sdc.increment('deleteanswer-counter');
     let timer = new Date();
     let db_timer = new Date();
@@ -252,18 +252,18 @@ exports.deleteAnswer = async (req, res,) => {
         where: { id: req.params.aid }
     })
         .then(data => {
-        sdc.timing("db.answerdelete", timer)
+        sdc.timing("db.deleteanswer", timer)
+        logger.info("DeleteAnswer Handler Completed")
+        sdc.timing("deleteanswer", timer)
             res.send({
                 message: "Answer Deleted Successfully"
             })
-        sdc.timing("answerdelete", timer)
-        logger.info("answer deleted successfully")
         });
 };
 
 
 exports.updateQuestion = (req, res,) => {
-    logger.info("inside handler question")
+    logger.info("updateQuestion Handler Started")
     let timer = new Date();
     sdc.increment("updatequestion-counter")
     if (!req.body.question_text) {
@@ -328,7 +328,7 @@ exports.updateQuestion = (req, res,) => {
                 }).then((question) => {
                     sdc.timing("db.updatequestion", db_timer)
                     sdc.timing("updatequestion", timer)
-                    logger.error("question updated")
+                    logger.info("updateQuestion handler Completed")
                     return res.status(201).send(
                         question
                     )
@@ -342,7 +342,7 @@ exports.updateQuestion = (req, res,) => {
 // -------  Public Routes ----------
 
 exports.getQuestionsAnswer = (req, res,) => {
-    logger.info("started handler get all questions")
+    logger.info("getQuestionsAnswer handler Started")
     sdc.increment("getquestionanswer-counter")
     let timer = new Date();
     let db_timer = new Date();
@@ -358,14 +358,14 @@ exports.getQuestionsAnswer = (req, res,) => {
         ]
     }).then((answer) => {
         sdc.timing("db.getquestionanswer", db_timer)
-        sdc.timing("getquestionanswer",timer)
         if (!answer) {
             logger.error("invalid question id or answer id")
             return res.send({
                 message: "Invalid Question ID or Answer ID"
             })
         } else {
-            logger.info("sending response for getallquestions")
+            logger.info("getQuestionAnswer Handler Completed")
+            sdc.timing("getquestionanswer",timer)
             return res.send({
                 "answer_id": answer.id,
                 "question_id": answer.questionId,
@@ -382,7 +382,7 @@ exports.getQuestionsAnswer = (req, res,) => {
 
 // get all questions 
 exports.getAllQuestions = (req, res,) => {
-    logger.info("started handler get all questions")
+    logger.info("getAllQuestions handler started")
     sdc.increment("getallquestions-counter")
     let timer = new Date();
     let db_timer = new Date();
@@ -409,13 +409,11 @@ exports.getAllQuestions = (req, res,) => {
 
     }).then((question) => {
         sdc.timing("db.getallquestions", db_timer)
+        logger.info("getAllQuestions handler Complted")
         sdc.timing("getallquestions",timer)
-        logger.info("sending response for getallquestions")
         return res.status(201).send(
             question
         )
-        
-
     }).catch(err => {
         err
     })
@@ -423,7 +421,7 @@ exports.getAllQuestions = (req, res,) => {
 
 // get question by ID 
 exports.getQuestion = (req, res,) => {
-    logger.info("started handler get question by id")
+    logger.info("getQuestionID handler started")
     sdc.increment("getquestionid-counter")
     let timer = new Date();
     let db_timer = new Date();
@@ -451,7 +449,7 @@ exports.getQuestion = (req, res,) => {
     }).then((question) => {
         sdc.timing("db.getquestionbid", db_timer)
         sdc.timing("getquestionbyid",timer)
-        logger.info("completed handler getquestionbyid")
+        logger.info("getquestionbyid handler completed")
         return res.status(201).send(
             question
         )
