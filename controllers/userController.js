@@ -30,7 +30,7 @@ exports.signup = (req, res) => {
         email: req.body.email,
         password: bcrypt.hashSync(req.body.password, 8)
     }).then((user) => {
-        sdc.timing('db.put.user.time', db_timer);
+        sdc.timing('db.create.user.time', db_timer);
         res.status(200).send({
             id: user.id,
             first_name: user.first_name,
@@ -39,7 +39,7 @@ exports.signup = (req, res) => {
             account_created: user.createdAt,
             account_updated: user.updatedAt,
         });
-        sdc.timing('put.user.time', timer);
+        sdc.timing('create.user.time', timer);
     })
         .catch(err => {
             res.status(500).send({ message: err.message });
@@ -73,7 +73,7 @@ exports.signin = (req, res) => {
         .catch(err => {
             res.status(500).send({ message: err.message });
         });
-    logger.info("signup handler completed")
+    logger.info("signin handler completed")
 };
 
 exports.update = (req, res) => {
@@ -110,6 +110,7 @@ exports.update = (req, res) => {
         }).then(user => {
             sdc.timing('db.update.user.time', db_timer);
             sdc.timing('update.user.time', timer);
+            logger.info('updateuser handler Completed');
             return res.send({
                 firstname: user.first_name,
                 last_name: user.last_name,
