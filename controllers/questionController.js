@@ -12,7 +12,7 @@ const logger = log4js.getLogger('logs');
 
 // create a question
 exports.createQuestion = (req, res) => {
-    logger.info('create question handler began');
+    logger.info('createQuestion handler started');
     sdc.increment('createquestion.counter');
     let timer = new Date();
     let categories_array = []
@@ -70,6 +70,7 @@ exports.createQuestion = (req, res) => {
         }).then(data => {
             sdc.timing("db.create.question",db_timer)
             setTimeout(async function () {
+                sdc.timing("create.question",timer)
                 res.status(201).send({
                     "question_id": data.id,
                     "created_timestamp": data.createdAt,
@@ -80,7 +81,7 @@ exports.createQuestion = (req, res) => {
                 })
             }, 100)
         })
-        sdc.timing("create.question",timer)
+        logger.info('createQuestion handler Completed');
     }).catch(err => {
         err
     })
@@ -88,7 +89,7 @@ exports.createQuestion = (req, res) => {
 
 // create a answer
 exports.createAnswer = (req, res,) => {
-    logger.info('create answer handler began');
+    logger.info('createAnswer handler Started');
     sdc.increment('createanswer.counter');
     let timer = new Date();
     if (!req.body.answer_text) {
@@ -105,6 +106,7 @@ exports.createAnswer = (req, res,) => {
     }).then((answer) => {
         sdc.timing("db.create.answer",db_timer)
         sdc.timing("create.anwer",timer )
+        logger.info('createAnswer handler Completed');
         return res.send({
             "answer_id": answer.id,
             "question_id": answer.questionId,
@@ -120,7 +122,7 @@ exports.createAnswer = (req, res,) => {
 
 // update a questions answer
 exports.updateAnswer = (req, res,) => {
-    logger.info('update answer handler began');
+    logger.info('updateAnswer handler Started');
     sdc.increment('updateanswer.counter');
     let timer = new Date();
     if (!req.body.answer_text) {
@@ -158,7 +160,8 @@ exports.updateAnswer = (req, res,) => {
                 "user_id": result.userId,
                 "answer_text": result.answer_text
             });
-            sdc.timing("create.anwer",timer )
+            sdc.timing("create.anwer",timer)
+            logger.info('updateAnswer handler Completed');
         })
     })
         .catch(err => {
@@ -167,7 +170,7 @@ exports.updateAnswer = (req, res,) => {
 };
 
 exports.deleteQuestion = async (req, res) => {
-    logger.info('delete question handler began');
+    logger.info('deleteQuestion handler Completed');
     sdc.increment('deletequestion.counter');
     let timer = new Date();
     let db_timer = new Date();

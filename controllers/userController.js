@@ -77,7 +77,7 @@ exports.signin = (req, res) => {
 };
 
 exports.update = (req, res) => {
-    logger.info('updateuser handler began');
+    logger.info('updateuser handler Started');
     sdc.increment('update.user.counter');
     let timer = new Date();
     if (!req.body.first_name) {
@@ -137,6 +137,7 @@ exports.getUserDetails = (req, res) => {
             }
             sdc.timing('db.get.userid.time', db_timer);
             sdc.timing('get.userid.time', timer);
+            logger.info('updateuser handler Completed');
             res.status(200).send({
                 id: user.id,
                 first_name: user.first_name,
