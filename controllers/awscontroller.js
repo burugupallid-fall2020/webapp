@@ -197,8 +197,8 @@ exports.deleteFileFromAnswer = (req, res) => {
             }
         })
         sdc.timing("db.deltefilewithanswer", db_timer)
+        sdc.timing("deltefilewithanswer", timer)
     })
-    sdc.timing("deltefilewithanswer", timer)
     logger.info("deleteFileFromAnswer handler Ended")
 }
 
