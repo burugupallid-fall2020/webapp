@@ -109,7 +109,7 @@ exports.update = (req, res) => {
             }
         }).then(user => {
             sdc.timing('db.update.user.time', db_timer);
-            ssdc.timing('update.user.time', timer);
+            sdc.timing('update.user.time', timer);
             return res.send({
                 firstname: user.first_name,
                 last_name: user.last_name,
