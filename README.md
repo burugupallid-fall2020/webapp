@@ -1,4 +1,4 @@
-# Webapp
+# Webapp-cloudwatch
 
 Technology stack used for this application is MySQL & Node JS
 
