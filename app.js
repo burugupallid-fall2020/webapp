@@ -4,7 +4,7 @@ const cors = require("cors");
 const PORT = process.env.PORT || 8080;
 const app = express();
 const db = require("./models");
-var log4js = require('../config/log4js')
+var log4js = require('./config/log4js')
 const logger = log4js.getLogger('logs');
 
 var optionOfCors = {
