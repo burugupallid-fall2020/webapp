@@ -116,17 +116,19 @@ exports.createAnswer = (req, res,) => {
                     region: "us-east-1"
                 });
                 // Create publish parameters
-                let data = {
-                    "email" : user.email,
-                    "answer_id": answer.id,
-                    "question_id": answer.questionId,
-                    "created_timestamp": answer.createdAt,
-                    "updated_timestamp": answer.updatedAt,
-                    "user_id": answer.userId,
-                    "answer_text": answer.answer_text
-                }
                 var params = {
-                  Message:   data,
+                    MessageStructure: 'json',
+                    Message: JSON.stringify({
+                        "default": JSON.stringify({
+                            "answer_id": answer.id,
+                            "question_id": answer.questionId,
+                            "created_timestamp": answer.createdAt,
+                            "updated_timestamp": answer.updatedAt,
+                            "user_id": answer.userId,
+                            "answer_text": answer.answer_text,
+                            "email":user.email
+                        }),
+                    }), /* required */
                   TopicArn: 'arn:aws:sns:us-east-1:336687597493:email_request'
                 };     
                 // Create promise and SNS service object
