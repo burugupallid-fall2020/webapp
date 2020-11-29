@@ -9,7 +9,7 @@ const File = db.file
 const User = db.user;
 var AWS = require('aws-sdk');
 var sdc = require("../config/statsdclient")
-var log4js = require('../config/log4js')
+var log4js = require('../config/log4js');
 const logger = log4js.getLogger('logs');
 
 // create a question
@@ -117,23 +117,11 @@ exports.createAnswer = (req, res,) => {
                 });
                 // Create publish parameters
                 var params = {
-                    MessageStructure: 'json',
-                    Message: JSON.stringify({
-                        "default": JSON.stringify({
-                            "answer_id": answer.id,
-                            "question_id": answer.questionId,
-                            "created_timestamp": answer.createdAt,
-                            "updated_timestamp": answer.updatedAt,
-                            "user_id": answer.userId,
-                            "answer_text": answer.answer_text
-                        }),
-                        "email": JSON.stringify(user.email),
-                    }), /* required */
+                  Message:   user.email,
                   TopicArn: 'arn:aws:sns:us-east-1:336687597493:email_request'
                 };     
                 // Create promise and SNS service object
                 var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(params).promise();
-                
                 // Handle promise's fulfilled/rejected states
                 publishTextPromise.then(
                   function(data) {
@@ -144,9 +132,8 @@ exports.createAnswer = (req, res,) => {
                     function(err) {
                     console.error(err, err.stack);
                     return res.send("Failed")
-                  });
-                
-            })
+              });
+            });
         })
         sdc.timing("db.create.answer",db_timer)
         logger.info('createAnswer handler Completed');
