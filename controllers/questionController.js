@@ -106,11 +106,13 @@ exports.createAnswer = (req, res,) => {
         questionId: req.params.qid,
         userId: req.user.id
     }).then((answer) => {
-        Question.findOne({
+        Question.findOne({where:{
             id: req.params.qid
-        }).then((question)=>{
+        }}).then((question)=>{
             User.findOne({
-                id: question.userId
+                where:{
+                    id: question.userId
+                }
             }).then((user)=>{
                 AWS.config.update({
                     region: "us-east-1"
