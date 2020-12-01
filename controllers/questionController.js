@@ -122,10 +122,9 @@ exports.createAnswer = (req, res,) => {
                     MessageStructure: 'json',
                     Message: JSON.stringify({
                         "default": JSON.stringify({
+                            "question_text": question.question_text,
                             "answer_id": answer.id,
                             "question_id": answer.questionId,
-                            "created_timestamp": answer.createdAt,
-                            "updated_timestamp": answer.updatedAt,
                             "user_id": answer.userId,
                             "answer_text": answer.answer_text,
                             "email":user.email
@@ -292,8 +291,57 @@ exports.deleteAnswer = async (req, res,) => {
     }
     logger.info('deleted from s3 bucket');
     sdc.timing("s3.deleteanswer",s3_timer)
-    Answer.destroy({
-        where: { id: req.params.aid }
+    Answer.findOne({
+        where:{
+            id: req.params.aid
+        }
+    }).then((answer)=>{
+        Question.findOne({where:{
+            id: req.params.qid
+        }}).then((question)=>{
+            User.findOne({
+                where:{
+                    id: question.userId
+                }
+            }).then((user)=>{
+                AWS.config.update({
+                    region: "us-east-1"
+                });
+                // Create publish parameters
+                var params = {
+                    MessageStructure: 'json',
+                    Message: JSON.stringify({
+                        "default": JSON.stringify({
+                            "question_text": question.question_text,
+                            "answer_id": answer.id,
+                            "question_id": answer.questionId,
+                            "user_id": answer.userId,
+                            "answer_text": answer.answer_text,
+                            "email":user.email
+                        }),
+                    }), /* required */
+                  TopicArn: 'arn:aws:sns:us-east-1:336687597493:email_request'
+                };     
+                // Create promise and SNS service object
+                var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(params).promise();
+                // Handle promise's fulfilled/rejected states
+                publishTextPromise.then(
+                  function(data) {
+                    console.log(`Message ${params.Message} sent to the topic ${params.TopicArn}`);
+                    console.log("MessageID is " + data.MessageId);
+                    return res.send("Success")
+                  }).catch(
+                    function(err) {
+                    console.error(err, err.stack);
+                    return res.send("Failed")
+              });
+            });
+        })
+
+    }).then(()=>{
+        Answer.destroy({
+            where: { id: req.params.aid }
+        })
     })
         .then(data => {
         sdc.timing("db.deleteanswer", timer)
