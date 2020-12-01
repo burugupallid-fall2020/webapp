@@ -127,7 +127,8 @@ exports.createAnswer = (req, res,) => {
                             "question_id": answer.questionId,
                             "user_id": answer.userId,
                             "answer_text": answer.answer_text,
-                            "email":user.email
+                            "email":user.email, 
+                            "type": "created"
                         }),
                     }), /* required */
                   TopicArn: 'arn:aws:sns:us-east-1:336687597493:email_request'
@@ -317,7 +318,8 @@ exports.deleteAnswer = async (req, res,) => {
                             "question_id": answer.questionId,
                             "user_id": answer.userId,
                             "answer_text": answer.answer_text,
-                            "email":user.email
+                            "email":user.email, 
+                            "type": "deleted"
                         }),
                     }), /* required */
                   TopicArn: 'arn:aws:sns:us-east-1:336687597493:email_request'
