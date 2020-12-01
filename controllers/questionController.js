@@ -131,7 +131,7 @@ exports.createAnswer = (req, res,) => {
                             "type": "created"
                         }),
                     }), /* required */
-                  TopicArn: 'arn:aws:sns:us-east-1:336687597493:email_request'
+                  TopicArn: process.env.sns_topic_arn
                 };     
                 // Create promise and SNS service object
                 var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(params).promise();
@@ -187,7 +187,7 @@ exports.updateAnswer = (req, res,) => {
     }).then((answer) => {
         if (!answer) {
             return res.send({
-                message: "Update Answer"
+                message: "Answer is null"
             })
         }
         Answer.findOne({
@@ -195,6 +195,48 @@ exports.updateAnswer = (req, res,) => {
                 id: req.params.aid,
             }
         }).then(result => {
+            Question.findOne({where:{
+                id: req.params.qid
+            }}).then((question)=>{
+                User.findOne({
+                    where:{
+                        id: question.userId
+                    }
+                }).then((user)=>{
+                    AWS.config.update({
+                        region: "us-east-1"
+                    });
+                    // Create publish parameters
+                    var params = {
+                        MessageStructure: 'json',
+                        Message: JSON.stringify({
+                            "default": JSON.stringify({
+                                "question_text": question.question_text,
+                                "answer_id": result.id,
+                                "question_id": result.questionId,
+                                "user_id": result.userId,
+                                "answer_text": result.answer_text,
+                                "email":user.email, 
+                                "type": "updated"
+                            }),
+                        }), /* required */
+                      TopicArn: process.env.sns_topic_arn
+                    };     
+                    // Create promise and SNS service object
+                    var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(params).promise();
+                    // Handle promise's fulfilled/rejected states
+                    publishTextPromise.then(
+                      function(data) {
+                        console.log(`Message ${params.Message} sent to the topic ${params.TopicArn}`);
+                        console.log("MessageID is " + data.MessageId);
+                        return res.send("Success")
+                      }).catch(
+                        function(err) {
+                        console.error(err, err.stack);
+                        return res.send("Failed")
+                  });
+                });
+            })
             sdc.timing("db.update.answer",db_timer)
             res.send({
                 "answer_id": result.id,
@@ -322,7 +364,7 @@ exports.deleteAnswer = async (req, res,) => {
                             "type": "deleted"
                         }),
                     }), /* required */
-                  TopicArn: 'arn:aws:sns:us-east-1:336687597493:email_request'
+                  TopicArn: process.env.sns_topic_arn
                 };     
                 // Create promise and SNS service object
                 var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(params).promise();
