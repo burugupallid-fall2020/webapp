@@ -212,10 +212,10 @@ exports.updateAnswer = (req, res,) => {
                         Message: JSON.stringify({
                             "default": JSON.stringify({
                                 "question_text": question.question_text,
-                                "answer_id": answer.id,
-                                "question_id": answer.questionId,
-                                "user_id": answer.userId,
-                                "answer_text": answer.answer_text,
+                                "answer_id": result.id,
+                                "question_id": result.questionId,
+                                "user_id": result.userId,
+                                "answer_text": result.answer_text,
                                 "email":user.email, 
                                 "type": "updated"
                             }),
