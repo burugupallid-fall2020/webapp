@@ -125,3 +125,14 @@ GET - Get all questions
 GET - Get question using question id
 http://{APP_URL}/v1/question/{question_id}
 ```
+### Logging and Metrics
+
+```
+Utilised AWS SDK to upload application logs and metrics to AWS cloud Watch 
+```
+
+### SNS, Lambda and SES
+
+```
+Simple Notification Service to publish the topic and serverless function will be triggred to send email using Simple Email Service and Update as required under DybamoDB
+```
