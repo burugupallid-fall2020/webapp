@@ -34,7 +34,12 @@ logger.info("Application Started Successfully")
 require('./routes/user.routes')(app);
 
 // Listen on the application port
-app.listen(PORT, () => {
+var server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
+  logger.trace('App started');
+  var host = server.address().address
+  var port = server.address().port
+  console.log("RMS app listening to http://%s:%s", host, port)
+
 });
 module.exports = app
