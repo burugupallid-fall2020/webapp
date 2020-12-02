@@ -107,7 +107,7 @@ exports.attachFileWithAnswer = async (req, res) => {
         answerId: req.params.aid
     }).then((file) => {
         sdc.timing("db.attachFileWithAnswer", db_timer)
-        console.log("FILE DATA POSTED SUCESSFULLY!", file)
+        console.log("file successfully posted!", file)
         params.Key = file.s3_object_name;
     })
     let s3_timer = new Date();
@@ -153,7 +153,7 @@ exports.deleteFileFromQuestion = (req, res) => {
                 console.log(err, err.stack)
             } // an error occurred
             else
-                res.json({ message: 'File deleted successfully!!!' }) // successful response
+                res.json({ message: 'File deleted from S3 Bucket' }) // successful response
         });
         sdc.timing("s3.deletefilewithanswer", s3_timer)
         File.destroy({
@@ -180,7 +180,7 @@ exports.deleteFileFromAnswer = (req, res) => {
             Bucket: env.Bucket,
             Key: file.s3_object_name
         };
-        console.log("PARAMS:", params)
+        console.log("s3 parameters are", params)
         let s3_timer = new Date();
         s3Client.deleteObject(params, function (err, data) {
             if (err) {
@@ -188,7 +188,7 @@ exports.deleteFileFromAnswer = (req, res) => {
                 logger.error("deleteFileFromAnswer S3 Bucket Error")
             }
             else
-                res.json({ message: 'File deleted successfully!!!' })
+                res.json({ message: 'File Deleted from S3 Bucket' })
         });
         sdc.timing("s3.deltefilewithanswer", s3_timer)
         File.destroy({

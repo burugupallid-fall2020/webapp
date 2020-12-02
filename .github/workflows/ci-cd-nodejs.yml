@@ -39,10 +39,6 @@ jobs:
         ls -al
         pwd
         cd codedeploy_artifact
-        pwd
-        ls -al
-        pwd
-        ls -al
     - name: Configure AWS credentials from Test account
       uses: aws-actions/configure-aws-credentials@v1
       with:
