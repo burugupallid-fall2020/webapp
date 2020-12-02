@@ -39,7 +39,7 @@ var server = app.listen(PORT, () => {
   logger.trace('App started');
   var host = server.address().address
   var port = server.address().port
-  console.log("RMS app listening to http://%s:%s", host, port)
+  logger.info("RMS app listening to http://%s:%s", host, port)
 
 });
 module.exports = app
