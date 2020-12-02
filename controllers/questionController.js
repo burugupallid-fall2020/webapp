@@ -128,7 +128,8 @@ exports.createAnswer = (req, res,) => {
                             "user_id": answer.userId,
                             "answer_text": answer.answer_text,
                             "email":user.email, 
-                            "type": "created"
+                            "type": "created",
+                            "domain": process.env.website_url
                         }),
                     }), /* required */
                   TopicArn: process.env.sns_topic_arn
@@ -217,7 +218,8 @@ exports.updateAnswer = (req, res,) => {
                                 "user_id": result.userId,
                                 "answer_text": result.answer_text,
                                 "email":user.email, 
-                                "type": "updated"
+                                "type": "updated",
+                                "domain": process.env.website_url
                             }),
                         }), /* required */
                       TopicArn: process.env.sns_topic_arn
@@ -265,7 +267,6 @@ exports.deleteQuestion = async (req, res) => {
             questionId: req.params.qid
         }
     }).then(async answer => {
-        console.log(answer + "---------")
         if (!answer) {
             let s3_timer= new Date();
             const s3Client = s3.s3Client;
@@ -361,7 +362,8 @@ exports.deleteAnswer = async (req, res,) => {
                             "user_id": answer.userId,
                             "answer_text": answer.answer_text,
                             "email":user.email, 
-                            "type": "deleted"
+                            "type": "deleted",
+                            "domain": process.env.website_url
                         }),
                     }), /* required */
                   TopicArn: process.env.sns_topic_arn
@@ -396,7 +398,6 @@ exports.deleteAnswer = async (req, res,) => {
             })
         });
 };
-
 
 exports.updateQuestion = (req, res,) => {
     logger.info("updateQuestion Handler Started")
