@@ -6,6 +6,7 @@ const app = express();
 const db = require("./models");
 var log4js = require('./config/log4js')
 const logger = log4js.getLogger('logs');
+var ip = require('ip');
 
 var optionOfCors = {
   origin: "http://localhost:8080"
@@ -37,8 +38,8 @@ require('./routes/user.routes')(app);
 var server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
   logger.trace('App started');
-  var host = server.address().address
-  var port = server.address().port
-  logger.info("application listening to http://%s:%s", host, port)
+  logger.info(ip.address())
+  
+  logger.info("application listening to http://%s", host)
 });
 module.exports = app
