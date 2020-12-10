@@ -12,6 +12,10 @@ const sequelize = new Sequelize(
   {
     host: config.HOST,
     dialect: config.dialect,
+    dialectOptions: {
+      ssl: 'Amazon RDS',
+      rejectUnauthorized: true,
+    },
     operatorsAliases: false,
 
     pool: {
