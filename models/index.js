@@ -1,5 +1,8 @@
 const config = require("../config/database.configuration.js");
 var seqUpdateNotFields = require('sequelize-noupdate-attributes');
+const { QueryTypes } = require("sequelize");
+var log4js = require('../config/log4js')
+const logger = log4js.getLogger('logs');
 const db = {};
 const Sequelize = require("sequelize");
 const sequelize = new Sequelize(
@@ -65,6 +68,18 @@ db.answer.belongsTo(db.user, {
 
 db.answer.belongsTo(db.question, {
   foreignKey: "questionId",
+});
+
+db.sequelize.query("SELECT id, user, host, connection_type FROM performance_schema.threads pst INNER JOIN information_schema.processlist isp ON pst.processlist_id = isp.id", {
+  type: QueryTypes.SELECT
+}).then((result) => {
+ 
+  logger.info(JSON.stringify(result)+"------------");
+  result.forEach(element => {
+    logger.info(element)
+  });
+}).catch(()=>{
+  logger.error(`Error in RDS performance schema query: `, {tags: 'http', additionalInfo: {error: err}});
 });
 
 
