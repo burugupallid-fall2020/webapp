@@ -37,6 +37,6 @@ require('./routes/user.routes')(app);
 var server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
   logger.trace('App started');
-  logger.info("application listening to http://%s", host)
+  logger.info("application listening to http://%s")
 });
 module.exports = app
