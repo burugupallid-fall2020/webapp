@@ -136,3 +136,30 @@ Utilised AWS SDK to upload application logs and metrics to AWS cloud Watch
 ```
 Simple Notification Service to publish the topic and serverless function will be triggred to send email using Simple Email Service and Update as required under DybamoDB
 ```
+
+### Webapplication Security 
+
+```
+Secure Application Endpoints
+
+Secureed web application endpoints with valid SSL certificates.
+
+For prod environment, you must request SSL certificate from Namecheap. Imported it into AWS Certificate Manager from your CLI and then configured your load balancer to use the imported certificate.
+
+Command to import certificate must be documented in your README.md file.
+Plain text requests sent to HTTP do not have to be supported. HTTP to HTTPS redirection is not required.
+Traffic from load balancer to EC2 instance can be plain text (HTTP).
+Users should not be able to connect to EC2 instance directly.
+
+Secure Database Connections
+Updated Terraform to create RDS with encrypted storage. You can use the default key created by AWS.
+Used Secure Socket Layer (SSL) or Transport Layer Security (TLS) from your application to encrypt a connection to RDS.
+```
+
+Command to import certificates to ACM
+
+```
+$ aws acm import-certificate --certificate fileb://Certificate.pem \
+      --certificate-chain fileb://CertificateChain.pem \
+      --private-key fileb://PrivateKey.pem 	
+```
