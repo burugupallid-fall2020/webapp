@@ -6,7 +6,6 @@ const app = express();
 const db = require("./models");
 var log4js = require('./config/log4js')
 const logger = log4js.getLogger('logs');
-var ip = require('ip');
 
 var optionOfCors = {
   origin: "http://localhost:8080"
